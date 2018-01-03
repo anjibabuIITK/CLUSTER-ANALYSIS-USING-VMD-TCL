@@ -104,7 +104,7 @@ EXAMPLE OUTPUT of this code looks like this. ( on Tk console)
 
 TCL Code :
 
-'''tcl
+```tcl
      proc clustering {sel1 rcutoff step_size args } {
      #=====================
      #puts -nonewline "\nEnter Your Selction :"
@@ -270,7 +270,7 @@ TCL Code :
      #
      puts "\n\n\n \t \t $********** ANJI BABU KAPAKAYALA **********$\n\n\n"
      }
-'''
+```
 --------------------------------------------------------------------------------------------------------------------------
 
 
