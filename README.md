@@ -2,9 +2,11 @@
 
 **TCL VMD SCRIPT TO DO CLUSTER ANALYSIS**
 
-     Authour : ANJI BABU KAPAKYALA
-            IIT KANPUR, INDIA.
-          (anjibabu480@gmail.com)
+     Authour : ANJI BABU KAPAKYALA,
+               Dept. of Chemistry,
+               C/O Dr.Nisanth N.Nair,
+               IIT KANPUR, INDIA.
+             (anjibabu480@gmail.com)
 
     
     PURPOSE : To do cluster analysis
