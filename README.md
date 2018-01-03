@@ -2,14 +2,14 @@
 
 **TCL VMD SCRIPT TO DO CLUSTER ANALYSIS**
 
-     Authour : **ANJI BABU KAPAKYALA
+     Authour : ANJI BABU KAPAKYALA
             IIT KANPUR, INDIA.
-          (anjibabu480@gmail.com)**
+          (anjibabu480@gmail.com)
 
     
-    **PURPOSE** : To do cluster analysis
+    PURPOSE : To do cluster analysis
     
-    **USAGE**   : source clustering.tcl in VMD Tk console.
+    USAGE   : source clustering.tcl in VMD Tk console.
          : clustering {Atomselection} {rmsd_cutoff} {step size} {frame_args}
 
  **Arguments   :**
