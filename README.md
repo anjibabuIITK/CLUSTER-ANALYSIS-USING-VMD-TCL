@@ -54,7 +54,7 @@ It shows the clusters on New graphical representation and stores the data in 4 f
     CLUSTER-C.xyz
     UNCLUSTER.xyz
 
-**EXAMPLE OUTPUT of this code looks like this. ( on Tk console) **
+**EXAMPLE OUTPUT of this code looks like this. ( on Tk console)**
 #===================================================================#
 
     WELCOME TO CLUSTERING ANALYSIS PLUGIN 
