@@ -30,7 +30,16 @@
 #
 #
 proc clustering {sel1 rcutoff step_size args } {
-#=====================
+#=====================Allignment=====================================
+set n [molinfo top get numframes]
+for {set i 0} {$i <= $n} {incr i} {
+set ref_sel [ atomselect top  "protein and backbone" frame 0]
+set compare_sel [ atomselect top "protein and backbone" frame $i]
+set transform_matrx [ measure fit $compare_sel $ref_sel ]
+$compare_sel  move $transform_matrx
+}
+puts "Aligned w.r.t protein backbone"
+#=====================CLUSTERING==================================
 #puts -nonewline "\nEnter Your Selction :"
 #flush stdout
 #gets stdin sel
@@ -40,10 +49,12 @@ set number 3
 #---------------------------------------#
 set nframes [molinfo top get numframes]
 #---------------Opening OUTPUT files
-set file1 [open "CLUSTER-A.xyz" w]
-set file2 [open "CLUSTER-B.xyz" w]
-set file3 [open "CLUSTER-C.xyz" w]
-set file4 [open "UNCLUSTER.xyz" w]
+set file1 [open "CLUSTER-A.pdb" w]
+set file2 [open "CLUSTER-B.pdb" w]
+set file3 [open "CLUSTER-C.pdb" w]
+set file4 [open "UNCLUSTER.pdb" w]
+set logfile [open "cluster.log" w]
+puts $logfile "\n Aligned w.r.t protein backbone \n"
 #---------------Settingup arguments----#
   set sel $sel1
   set selA [atomselect top $sel ]
@@ -76,6 +87,20 @@ set file4 [open "UNCLUSTER.xyz" w]
  puts " End Frame         : $nf \n"
  puts " Analysis will be performed on $inf to $nframes frame(s) \n\n\n"
 #------------------------------------------#
+#------------------PRINT Given DATA in logfile-----#
+ puts $logfile " \n \t  \t  WELCOME TO CLUSTERING ANALYSIS PLUGIN "
+ puts $logfile "    \t  \t  =====================================\n\n"
+ puts $logfile " \n No. of frames Found in Trajectory: $nframes\n\n"
+ puts $logfile " Given Data :\n =============\n"
+ puts $logfile " Atomselection     : $sel1 "
+ puts $logfile " Distance Function : rmsd (default) "
+ puts $logfile " No. of clusters   : 3    (default) "
+ puts $logfile " Rmsd Cutoff       : $rcutoff      "
+ puts $logfile " Step size         : $step_size "
+ puts $logfile " Starting Frame    : $inf "
+ puts $logfile " End Frame         : $nf \n"
+ puts $logfile " Analysis will be performed on $inf to $nframes frame(s) \n\n\n"
+#------------------------------------------#
   # Cluster
   #set result [measure cluster $selA num $number cutoff $rmsdcutoff first 0 last $totframes  step 2 distfunc rmsd ]
 #selupdate $calc_selupdate weight $calc_weight]
@@ -86,6 +111,7 @@ set file4 [open "UNCLUSTER.xyz" w]
  foreach {listA listB listC listD} [measure cluster $selA num $number cutoff $rcutoff first $inf last $totframes  step $step_size distfunc rmsd ] break
     set nclustera [llength $listA] ; set nclusterb [llength $listB] ; set nclusterc [llength $listC] ; set nclusterd [llength $listD]
  puts " CLUSTER-A ($nclustera) :\n $listA \n\n CLUSTER-B ($nclusterb)  :\n $listB \n\n CLUSTER-C ($nclusterc)  :\n $listC \n\n UNCLUSTRED ($nclusterd) : \n $listD\n"         
+ puts $logfile  " CLUSTER-A ($nclustera) :\n $listA \n\n CLUSTER-B ($nclusterb)  :\n $listB \n\n CLUSTER-C ($nclusterc)  :\n $listC \n\n UNCLUSTRED ($nclusterd) : \n $listD\n"         
 #-----------------------------------------------
 # update on graphical representation of the above clusters
 #------ListA
@@ -145,9 +171,9 @@ for {set i 0 ; set d 1} { $i<=$nframes} {incr i; incr d}  {
 #puts " Writing CLUSTER-A.xyz :$i"
 #puts "$i : $list1 "
 #set selA [atomselect top $sel frame $i ]
-[atomselect top "all" frame $i] writexyz cluster$i.xyz
-exec cat cluster$i.xyz >> CLUSTER-A.xyz
-exec rm cluster$i.xyz
+[atomselect top "all" frame $i] writepdb cluster$i.pdb
+exec cat cluster$i.pdb >> CLUSTER-A.pdb
+exec rm cluster$i.pdb
 }
 }     
 #-------STORING CLUSTER-B
@@ -156,9 +182,9 @@ exec rm cluster$i.xyz
 #puts "$i : $list2 "
 #puts " Writing CLUSTER-B.xyz :$i"
 #set selA [atomselect top $sel frame $i ]
-[atomselect top "all" frame $i] writexyz cluster$i.xyz
-exec cat cluster$i.xyz >> CLUSTER-B.xyz
-exec rm cluster$i.xyz
+[atomselect top "all" frame $i] writepdb cluster$i.pdb
+exec cat cluster$i.pdb >> CLUSTER-B.pdb
+exec rm cluster$i.pdb
 }
 }     
 #-------STORING CLUSTER-C
@@ -167,9 +193,9 @@ exec rm cluster$i.xyz
 #puts "$i : $list3 "
 #puts " Writing CLUSTER-C.xyz :$i"
 #set selA [atomselect top $sel frame $i ]
-[atomselect top "all" frame $i] writexyz cluster$i.xyz
-exec cat cluster$i.xyz >> CLUSTER-C.xyz
-exec rm cluster$i.xyz
+[atomselect top "all" frame $i] writepdb cluster$i.pdb
+exec cat cluster$i.pdb >> CLUSTER-C.pdb
+exec rm cluster$i.pdb
 }
 }     
 #-------STORING UN CLUSTER-D
@@ -178,9 +204,9 @@ exec rm cluster$i.xyz
 #puts "$i : $list4 "
 #puts " Writing UNCLUSTER.xyz :$i"
 #set selA [atomselect top $sel frame $i ]
-[atomselect top "all" frame $i] writexyz cluster$i.xyz
-exec cat cluster$i.xyz >> UNCLUSTER.xyz
-exec rm cluster$i.xyz
+[atomselect top "all" frame $i] writepdb cluster$i.pdb
+exec cat cluster$i.pdb >> UNCLUSTER.pdb
+exec rm cluster$i.pdb
 }
 }     
 }
@@ -190,11 +216,36 @@ close $file3
 close $file4
 #-----------Printing OUTPUT files
 puts " \n\n OUTPUT files :\n---------------\n"
-puts " \n CLUSTER-A.xyz\n CLUSTER-B.xyz\n CLUSTER-C.xyz \n UNCLUSTER.xyz \n"
+puts $logfile   " \n\n OUTPUT files :\n---------------\n"
+puts " \n CLUSTER-A.pdb\n CLUSTER-B.pdb\n CLUSTER-C.pdb \n UNCLUSTER.pdb \n cluster.log \n"
+puts $logfile " \n CLUSTER-A.pdb\n CLUSTER-B.pdb\n CLUSTER-C.pdb \n UNCLUSTER.pdb \n cluster.log \n"
 
 #
 puts "\n\n\n \t  \t $********** ANJI BABU KAPAKAYALA **********$\n\n\n"
+puts $logfile "\n\n\n \t  \t $********** ANJI BABU KAPAKAYALA **********$\n\n\n"
+close $logfile
 }
 #====================================================#
+# TCL VMD Script to measure average strucure from given frames
+#
+# Usage  : avg_str <molid> <atom selection>
+#
+# Example : avg_str 0 "protein"
+# Example : avg_str 1 "backbone"
+#
+#
+proc avg_str {id sel} {
+set nframes [molinfo $id get numframes]
+puts " No. of frames : $nframes"
+#--------------------#
+set sel1 [atomselect $id $sel]
+set avgpos [measure avpos $sel1]
+# Moves the selected atoms to the average positions computed
+ $sel1 set {x y z} $avgpos
+# Write into pdb
+$sel1 writepdb Avg-Pos-$id.pdb
+puts "\n ********** KAPAKAYALA ANJI BABU **********$ "
+}
+#------------------------------------------------------#
 #        WRITTEN BY ANJI BABU KAPAKAYALA             #
 #====================================================#
