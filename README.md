@@ -101,7 +101,7 @@ It shows the clusters on New graphical representation and stores the data in 4 f
     CLUSTER-B.pdb
     CLUSTER-C.pdb 
     UNCLUSTER.pdb 
-
+    cluster.log
 
 
 **TCL Code :**
